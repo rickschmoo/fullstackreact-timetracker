@@ -220,25 +220,44 @@ const EditableTimer = React.createClass({
 
 const TimerForm = React.createClass({
 
+  getInitialState: function () {
+    return {
+      inErrorState: false,
+    };
+  },
+
   handleSubmit: function () {
-    this.props.onFormSubmit({
-      id: this.props.id,
-      title: this.refs.title.value,
-      project: this.refs.project.value,
-    });
+    if (this.refs.title.value !== '' && this.refs.project.value !== '') {
+      this.props.onFormSubmit({
+        id: this.props.id,
+        title: this.refs.title.value,
+        project: this.refs.project.value,
+      });
+    } else {
+      this.setState( { inErrorState: true } );
+    }
   },
 
   render: function () {
+
     const submitText = this.props.id ? 'Update' : 'Create';
+
+    let formClass = 'ui form ';
+    if (this.state.inErrorState) formClass += ' error';
+
     return (
       <div className='ui centered card'>
         <div className='content'>
-          <div className='ui form'>
-            <div className='field'>
+          <div className={formClass}>
+           <div className="ui error message">
+              <div className="header">Bad!</div>
+              <p>Missing required fields.</p>
+            </div>
+            <div className='field required'>
               <label>Title</label>
               <input type='text' ref='title' defaultValue={this.props.title} />
             </div>
-            <div className='field'>
+            <div className='field required'>
               <label>Project</label>
               <input type='text' ref='project' defaultValue={this.props.project} />
             </div>
